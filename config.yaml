@@ -1,0 +1,490 @@
+# # -*- coding: utf-8 -*-
+# """
+# Created on Tue May 12 22:23:44 2020
+
+# @author: Raghu
+# """
+---
+logging_level:
+   INFO
+   # DEBUG
+
+regression_models_parameters:
+   RandomForestRegressor:
+      n_estimators:
+         - 500
+         - 700
+         - 1000
+      criterion:
+         - mse
+         - mae
+      max_depth:
+         #- 20
+         #- 30
+         - 40
+         - 60
+         - 80
+      min_samples_split:
+         - 2
+         - 5
+         - 10
+      min_samples_leaf:
+         #- 2
+         - 4
+         - 6
+         - 8
+      max_features:
+         - auto
+         - sqrt
+         - log2
+      n_jobs:
+         - 6
+      bootstrap:
+         - True
+         - False
+      random_state:
+         - 42
+#============================================
+   GradientBoostingRegressor:
+      loss:
+         - ls
+         - lad
+         - huber
+         - quantile
+      learning_rate:
+         - 0.1 #default
+         - 0.15
+         - 0.2
+      n_estimators:
+         - 100 #default
+         - 300
+         - 500
+         - 700
+         - 1000
+      subsample:
+         - 1.0 #default
+         - 0.9
+      criterion:
+         - friedman_mse #default
+         - mse
+         - mae
+      min_samples_split:
+         - 2 #default
+         - 4
+      min_samples_leaf:
+         - 1 #default
+         - 2
+      max_depth:
+         - 3 #default
+         - 5
+      random_state:
+         - 42
+      max_features:
+         - auto
+         - sqrt
+         - log2
+      validation_fraction:
+         - 0.1 #default
+      n_iter_no_change:
+         - 3
+
+#============================================
+   LGBMRegressor:
+      boosting_type:
+         - gbdt #default
+         - dart
+         - goss
+      num_leaves:
+         - 31 #default
+         - 35
+      max_depth:
+         - -1 #default - no limit
+      learning_rate:
+         - 0.1 #default
+         - 0.2
+      n_estimators:
+         - 100 #default
+         - 500
+         - 800
+         - 1000
+         - 1500
+      subsample_for_bin:
+         - 200000 #default
+      min_child_samples:
+         - 20 #default
+      random_state:
+         - 42
+      n_jobs:
+         - 6
+
+#============================================
+#============================================
+
+tree_classification_models_parameters:
+   CatBoostClassifier:
+       iterations:
+          - 500
+          - 1000
+          - 1200
+          - 1400
+          - 1600
+          - 2000
+       learning_rate:
+          - 0.02
+          - 0.03
+          - 0.001
+          - 0.01
+          - 0.1
+          - 0.2
+          - 0.3
+       depth:
+          - 3
+          - 1
+          - 2
+          - 6
+          - 4
+          - 5
+          - 7
+          - 8
+          - 9
+          - 10
+       l2_leaf_reg:
+          - 3
+          - 1
+          - 5
+          - 10
+          - 12
+          - 15
+          - 18
+          - 20
+          - 25
+          - 30
+          - 35
+          - 100
+          - 120
+       border_count:
+          - 5
+          - 10
+          - 60
+          - 70
+          - 80
+          - 90
+          - 100
+          - 200
+          - 250
+          - 300
+       # ctr_border_count:
+       #    - 50
+       #    - 5
+       #    - 10
+       #    - 20
+       #    - 100
+       #    - 200
+       thread_count:
+          - 4
+       random_state:
+          - 42
+       verbose:
+          - False
+
+
+   GradientBoostingClassifier:
+      # Below are Tree-Specific Parameters
+      min_samples_split: # <== controls overfitting, too high value overfits
+         #- 5
+         #- 10
+         #- 20
+         #- 50
+         #- 100
+         #- 150
+         #- 200
+         #- 220
+         #- 240
+         #- 260
+         - 280
+         - 300
+         - 350
+         - 400
+      min_samples_leaf: # <== control over-fitting similar to min_samples_split.
+         - 5
+         - 10
+         - 15
+         - 20
+         #- 25
+         #- 27              # Smaller value need to be choosed
+         #- 30
+         #- 40
+         #- 50
+         #- 60
+         # - 70
+         # - 80
+         # - 90
+      max_depth: # <== Used to control over-fitting
+         #- 5
+         #- 6
+         #- 7
+         #- 10
+         #- 11
+         #- 12
+         #- 13
+         #- 14
+         #- 16
+         #- 18
+         #- 20
+         #- 22
+         #- 24
+         #- 26
+         #- 28
+         - 30
+         - 32
+         - 34
+         - 36
+         - 40
+
+      # The number of features to consider while searching for a best split
+      # As a thumb-rule, square root of the total number of features works
+      # great but we should check upto 30-40% of the total number of features.
+      max_features:
+         - auto
+         - sqrt
+         - log2
+      # Below are Boosting Parameters
+
+      #  - This determines the impact of each tree on the final outcome
+      # GBM works by starting with an initial estimate which is updated
+      # using the output of each tree. The learning parameter controls the
+      # magnitude of this change in the estimates.
+      # - Lower values are generally preferred as they make the model
+      # robust to the specific characteristics of tree and thus allowing
+      # it to generalize well.
+      learning_rate:
+         #- 0.001
+         - 0.01
+         - 0.02
+         - 0.03
+         - 0.1
+         #- 0.12
+         #- 0.15
+         #- 0.2
+         #- 0.25
+         #- 0.3
+      # - The number of sequential trees to be modeled
+      # - Though GBM is fairly robust at higher number of trees but it can
+      # still overfit at a point. Hence, this should be tuned using CV for a
+      # particular learning rate.
+      n_estimators:
+         #- 100 # default
+         #- 200
+         #- 500
+         - 600
+         - 700
+         - 750
+         - 800
+         #- 1000
+         #- 1500
+         #- 2000
+      # - The fraction of observations to be selected for each tree.
+      # Selection is done by random sampling.
+      # - Values slightly less than 1 make the model robust by reducing the
+      # variance.
+      # - Typical values ~0.8 generally work fine but can be fine-tuned
+      # further.
+      subsample:
+         #- 0.7
+         #- 0.75
+         #- 0.8
+         #- 0.81
+         #- 0.82
+         #- 0.83
+         #- 0.84
+         - 0.85
+         - 0.87
+         - 0.89
+         - 0.9
+         #- 0.95
+         #- 1.0
+      random_state:
+         - 42
+
+   RandomForestClassifier:
+      n_estimators:
+         #- 100
+         #- 300
+         #- 500
+         #- 1000
+         #- 1200
+         - 1400
+         - 1600
+         #- 1800
+         #- 2000
+      criterion:
+         - gini
+         - entropy
+      max_depth: # <== Used to control over-fitting
+         #- 2
+         #- 3
+         #- 4
+         #- 5
+         #- 6
+         #- 7
+         #- 10
+         #- 11
+         #- 12
+         #- 13
+         #- 14
+         #- 16
+         - 18
+         - 20
+         - 22
+         - 24
+      min_samples_split: # <== controls overfitting, too high value overfits
+         - 5
+         - 10
+         - 20
+         - 50
+         #- 100
+         #- 150
+         #- 200
+         #- 220
+         #- 240
+         #- 260
+         #- 280
+         #- 300
+      min_samples_leaf: # <== control over-fitting similar to min_samples_split.
+         - 5
+         - 10
+         - 15           # Smaller value need to be choosed
+         - 20
+         #- 25
+         #- 27
+         #- 30
+         #- 40
+         #- 50
+         #- 60
+         #- 70
+         #- 80
+         #- 90
+      max_features:
+         - auto
+         - sqrt
+         - log2
+      bootstrap:
+         - True
+         - False
+      # oob_score:
+      #    - True
+      #    - False
+      random_state:
+         - 42
+
+   LGBMClassifier:
+      objective: #change this based on the problem
+         - binary
+         #- multiclass
+      boosting_type:
+         - gbdt #default
+         # - dart
+         # - goss
+         # - rf
+      num_leaves:
+         #- 31 #default
+         #- 6
+         #- 8
+         - 10
+         - 12
+         - 14
+      learning_rate:
+         - 0.1 #default
+         - 0.01
+         - 0.02
+         - 0.03
+         - 0.04
+         #- 0.12
+         #- 0.15
+         #- 0.2
+         #- 0.25
+         #- 0.3
+      n_estimators:
+         - 100 #default
+         - 200
+         - 400
+         - 600
+      min_child_samples:
+         - 15
+         - 20 #default
+         - 25
+         - 30
+         - 35
+      subsample:
+         - 1.0 #default
+         - 0.7
+         #- 0.75
+         #- 0.8
+         #- 0.85
+      colsample_bytree :
+         - 1.0 #default
+         - 0.7
+         - 0.75
+         - 0.8
+      reg_alpha:
+         - 0.0 #default
+         - 1.0
+         #- 1.2
+         #- 1.4
+      reg_lambda:
+         - 0.0 #default
+         - 1.0
+      max_bin:
+         - 255 #default
+         - 300
+         - 350
+      min_data_in_leaf:
+         - 20 #default
+         - 25
+         - 30
+      feature_fraction :
+         - 1.0 #default
+         - 0.7
+         - 0.75
+         - 0.8
+         - 0.85
+      random_state:
+         - 42
+
+
+
+
+
+
+classification_eval_metrics:
+    Accuracy:
+      accuracy
+    ROC_AUC_Score:
+      roc_auc
+    F1_Score:
+      f1_weighted
+
+
+classification_models_short_name:
+   CatBoostClassifier:
+      - cbc
+   GradientBoostingClassifier:
+      - gbc
+   RandomForestClassifier:
+      - rfc
+   LGBMClassifier:
+      - lgbmc
+
+regression_models_short_name:
+   RandomForestRegressor:
+      - rfr
+   GradientBoostingRegressor:
+      - gbr
+   AdaBoostRegressor:
+      - abr
+   ExtraTreesRegressor:
+      - etr
+   LGBMRegressor:
+      - lgbmr
+
+
