@@ -383,7 +383,8 @@ class Custom_Features_Transformer(BaseEstimator, TransformerMixin):
                                     post regular expression text extraction""")
 
             if value['strategy'] == 'value_mapping':
-                X_copy[key] = X_copy[key].map(self.feat_trans_dict[key])
+                # X_copy[key] = X_copy[key].map(self.feat_trans_dict[key])
+                X_copy[key] = X_copy[key].replace(self.feat_trans_dict[key])
 
                 if self.loginfo:
                     logger.info(f"""Custom value mapping transformation applied to column - '{key}'
@@ -1154,7 +1155,7 @@ def model_perf_tuning(X, y,
                                    ('model_estimator', globals()[estimator]())])
 
         if model_type == 'Classification':
-            model_params = config_data['tree_classification_models_parameters'][estimator]
+            model_params = config_data['classification_models_parameters'][estimator]
             cv = StratifiedKFold(n_splits=cv_n_splits, shuffle=True, random_state=42)
         if model_type == 'Regression':
             model_params = config_data['regression_models_parameters'][estimator]
@@ -1246,7 +1247,7 @@ def model_perf_tuning(X, y,
             if score_eval == 'roc_auc_score':
                 oof_eval_score = roc_auc_score(y_true=y.to_numpy(), y_score=oof_preds)
             if score_eval == 'f1_score':
-                oof_eval_score = f1_score(y_true=y.to_numpy(), y_score=oof_preds)                
+                    oof_eval_score = f1_score(y_true=y.to_numpy(), y_pred=oof_preds)                
 
         print(f"""\n{score_eval} OOF Model Evaluation Score : {estimator} - {oof_eval_score}""")
         #oof_eval_score = score_eval(y, oof_preds)
@@ -1503,6 +1504,7 @@ def model_ensemble(X,
                     greater_the_better,
                     model_type,
                     model_perf_tuning_df,
+                    n_splits,
                     n_jobs=-1):
 
     stacked_model_eval_dict = {}
@@ -1559,11 +1561,11 @@ def model_ensemble(X,
 
         # define the stacking ensemble
         if model_type == 'Regression':
-            cv = KFold(n_splits=3, shuffle=True, random_state=42)
+            cv = KFold(n_splits=n_splits, shuffle=True, random_state=42)
             model_stack = StackingRegressor(estimators=level0, final_estimator=level1)
 
         if model_type == 'Classification':
-            cv = StratifiedKFold(n_splits=3, shuffle=True, random_state=42)
+            cv = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=42)
             model_stack = StackingClassifier(estimators=level0, final_estimator=level1)
 
         # model_pipeline = Pipeline([('feat_trans', feature_trans),
@@ -1578,8 +1580,6 @@ def model_ensemble(X,
                                       y=y,
                                       cv=cv,
                                       n_jobs=n_jobs,
-                                      #n_jobs=-1,
-                                      #n_jobs=1,
                                       method='predict',
                                       # fit_params=clf.best_params_,
                                       verbose=1)
